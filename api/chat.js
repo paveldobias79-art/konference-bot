@@ -1,20 +1,17 @@
 // =============================================================
 // BACKEND: api/chat.js
-// Toto je serverová část - běží na Vercel, nikdy není viditelná
-// návštěvníkům. Chrání tvůj API klíč.
+// Verze s prompt cachingem - sborníky se načtou jednou do cache,
+// každý další dotaz je výrazně levnější a nepřekračuje rate limity.
 // =============================================================
 
 import Anthropic from "@anthropic-ai/sdk";
 import fs from "fs";
 import path from "path";
 
-// Inicializace Claude klienta
-// API klíč se načte z prostředí Vercel (nastavíš ho v dashboardu)
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-// Systémový prompt - definuje chování bota
 const SYSTEM_PROMPT = `Jsi odborný asistent konferencí Pitná voda pořádaných firmou ENVI-PUR, s.r.o.
 Máš k dispozici sborníky ze dvou ročníků konference.
 Odpovídáš výhradně na základě přiložených sborníků přednášek.
@@ -33,50 +30,53 @@ Pravidla:
 Konference: Pitná voda (ročníky 2022 a 2024)
 Pořadatel: ENVI-PUR, s.r.o.`;
 
-export default async function handler(req, res) {
-  // Povolení CORS - umožňuje volání z jiných domén (iframe)
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+// Načteme PDF soubory jednou při startu serveru (ne při každém dotazu)
+// To urychlí odpovědi a umožní efektivní caching
+let pdf2022Base64 = null;
+let pdf2024Base64 = null;
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Pouze POST metoda" });
-  }
-
-  const { message } = req.body;
-
-  if (!message || message.trim() === "") {
-    return res.status(400).json({ error: "Zpráva nesmí být prázdná" });
-  }
-
-  // Načtení obou PDF sborníků
-  // Soubory musí být uloženy jako:
-  //   public/sbornik_2022.pdf
-  //   public/sbornik_2024.pdf
-  let pdf2022Base64, pdf2024Base64;
-
+function loadPDFs() {
   try {
     const path2022 = path.join(process.cwd(), "public", "sbornik_2022.pdf");
     pdf2022Base64 = fs.readFileSync(path2022).toString("base64");
+    console.log("Sborník 2022 načten.");
   } catch (err) {
-    console.error("Chyba při načítání sborníku 2022:", err);
-    return res.status(500).json({ error: "Sborník 2022 nebyl nalezen. Kontaktujte správce." });
+    console.error("Chyba při načítání sborníku 2022:", err.message);
   }
 
   try {
     const path2024 = path.join(process.cwd(), "public", "sbornik_2024.pdf");
     pdf2024Base64 = fs.readFileSync(path2024).toString("base64");
+    console.log("Sborník 2024 načten.");
   } catch (err) {
-    console.error("Chyba při načítání sborníku 2024:", err);
-    return res.status(500).json({ error: "Sborník 2024 nebyl nalezen. Kontaktujte správce." });
+    console.error("Chyba při načítání sborníku 2024:", err.message);
+  }
+}
+
+// Načti PDF hned při inicializaci
+loadPDFs();
+
+export default async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Pouze POST metoda" });
+
+  const { message } = req.body;
+  if (!message || message.trim() === "") {
+    return res.status(400).json({ error: "Zpráva nesmí být prázdná" });
+  }
+
+  if (!pdf2022Base64 || !pdf2024Base64) {
+    loadPDFs(); // Zkus znovu načíst pokud chybí
+    if (!pdf2022Base64 || !pdf2024Base64) {
+      return res.status(500).json({ error: "Sborníky nebyly nalezeny. Kontaktujte správce." });
+    }
   }
 
   try {
-    // Volání Claude API s oběma sborníky jako kontextem
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-6",
       max_tokens: 1024,
@@ -85,7 +85,7 @@ export default async function handler(req, res) {
         {
           role: "user",
           content: [
-            // Sborník 2022
+            // Sborník 2022 - s cache_control pro uložení do cache
             {
               type: "document",
               source: {
@@ -94,8 +94,9 @@ export default async function handler(req, res) {
                 data: pdf2022Base64,
               },
               title: "Sborník konference Pitná voda 2022",
+              cache_control: { type: "ephemeral" }, // <- klíčové: uloží do cache na 5 minut
             },
-            // Sborník 2024
+            // Sborník 2024 - s cache_control
             {
               type: "document",
               source: {
@@ -104,8 +105,9 @@ export default async function handler(req, res) {
                 data: pdf2024Base64,
               },
               title: "Sborník konference Pitná voda 2024",
+              cache_control: { type: "ephemeral" }, // <- klíčové
             },
-            // Dotaz uživatele
+            // Dotaz uživatele (nekešuje se - je vždy jiný)
             {
               type: "text",
               text: message,
@@ -117,10 +119,17 @@ export default async function handler(req, res) {
 
     const answer = response.content[0].text;
     return res.status(200).json({ answer });
+
   } catch (err) {
     console.error("Chyba Claude API:", err);
-    return res
-      .status(500)
-      .json({ error: "Chyba při zpracování dotazu. Zkuste to znovu." });
+
+    // Srozumitelná chybová hláška pro rate limit
+    if (err.status === 429) {
+      return res.status(429).json({
+        error: "Příliš mnoho dotazů najednou. Počkejte chvíli a zkuste to znovu."
+      });
+    }
+
+    return res.status(500).json({ error: "Chyba při zpracování dotazu. Zkuste to znovu." });
   }
 }
