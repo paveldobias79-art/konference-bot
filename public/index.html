@@ -76,8 +76,8 @@
       font-size: clamp(22px, 3vw, 32px);
       font-weight: 600;
       line-height: 1.2;
-      /* UPRAV: Pitná voda 2026 */
-      Pitná voda 2026
+      /* UPRAV: Název konference */
+      /* Obsah je v HTML níže */
     }
 
     .header-sub {
@@ -196,6 +196,12 @@
       border-bottom-right-radius: 4px;
     }
 
+    .bubble p {
+      margin: 0 0 10px 0;
+    }
+    .bubble p:last-child {
+      margin-bottom: 0;
+    }
     .message.bot .bubble {
       background: var(--water-pale);
       color: var(--ink);
@@ -328,9 +334,9 @@
 
   <!-- ─── Záhlaví ─────────────────────────────────────────── -->
   <header>
-    <div class="header-label">Průvodce sborníky přednášek</div>
+    <div class="header-label">Průvodce sborníky přednášek konference Pitná voda</div>
     <h1>Pitná voda 2022 &amp; 2024</h1>
-    <div class="header-sub">ENVI-PUR, s.r.o. &nbsp;·&nbsp; Zeptejte se na obsah sborníků obou ročníků</div>
+    <div class="header-sub">ENVI-PUR, s.r.o. a W@ET Team České Budějovice &nbsp;·&nbsp; Zeptejte se na obsah sborníků obou ročníků</div>
   </header>
 
   <!-- ─── Hlavní obsah ─────────────────────────────────────── -->
@@ -340,7 +346,7 @@
     <div id="chat-window">
       <div class="welcome" id="welcome">
         <div class="welcome-icon">💧</div>
-        <h2>Průvodce sborníky Pitná voda</h2>
+        <h2>Průvodce sborníky Pitná voda 2022 a 2024</h2>
         <p>Zeptejte se na příspěvky, autory nebo témata z konferencí ročníků <strong>2022</strong> a <strong>2024</strong>. Bot vždy uvede ze kterého ročníku informace pochází.</p>
       </div>
     </div>
@@ -378,6 +384,27 @@
   </footer>
 
   <script>
+    // ─── Markdown renderer ──────────────────────────────────
+    function renderMarkdown(text) {
+      // Escapujeme HTML znaky pro bezpečnost
+      let html = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      // **tučný text** → <strong>
+      html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      // Pomlčkové odrážky → <li>
+      html = html.replace(/^[ \t]*[-–] (.+)/gm, "<li>$1</li>");
+      html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, "<ul>$1</ul>");
+      // Dvojitý prázdný řádek → vizuální mezera mezi příspěvky
+      html = html.replace(/\n\n/g, "</p><p>");
+      // Jednoduchý nový řádek → <br>
+      html = html.replace(/\n/g, "<br>");
+      // Obal celé do <p>
+      html = "<p>" + html + "</p>";
+      return html;
+    }
+
     // ─── Nastavení ─────────────────────────────────────────
     // UPRAV: URL tvého Vercel backendu (dostaneš po deployi)
     // Dokud testuješ lokálně, nech prázdné nebo nastav "/api/chat"
@@ -419,7 +446,7 @@
 
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
-      bubble.textContent = text;
+      bubble.innerHTML = renderMarkdown(text);
 
       msg.appendChild(avatar);
       msg.appendChild(bubble);
