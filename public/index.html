@@ -2,355 +2,467 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Průvodce sborníky | Pitná voda 2022 &amp; 2024</title>
-
-  <!-- Písma: Cormorant Garamond pro nadpisy, Source Sans pro text -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Průvodce sborníky | Pitná voda 2022 & 2024</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Source+Sans+3:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* ─── Základní proměnné ──────────────────────────────── */
     :root {
-      --ink:        #1a2332;
-      --ink-light:  #3d5166;
-      --water:      #2d6e8e;
-      --water-pale: #e8f3f8;
-      --surface:    #f5f7f9;
-      --border:     #d1dde6;
-      --white:      #ffffff;
-      --accent:     #1a8c6e;
-      --shadow:     0 2px 16px rgba(26,35,50,0.08);
+      --navy:        #0a1628;
+      --navy-mid:    #0d2040;
+      --navy-light:  #1a3a5c;
+      --cyan:        #00c2e0;
+      --cyan-dark:   #0099b8;
+      --cyan-glow:   rgba(0,194,224,0.15);
+      --mint-bg:     #e8f5f8;
+      --mint-light:  #f0f9fb;
+      --white:       #ffffff;
+      --text-dark:   #0a1628;
+      --text-mid:    #2d4a63;
+      --text-soft:   #5a7a8f;
+      --border:      #c5dde6;
+      --shadow:      0 4px 24px rgba(10,22,40,0.12);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Montserrat', sans-serif;
+      background: var(--mint-bg);
+      color: var(--text-dark);
+      -webkit-font-smoothing: antialiased;
+    }
 
     body {
-      font-family: 'Source Sans 3', sans-serif;
-      background: var(--surface);
-      color: var(--ink);
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      min-height: 100dvh;
     }
 
-    /* ─── Záhlaví ────────────────────────────────────────── */
+    /* ── ZÁHLAVÍ ─────────────────────────────────────────── */
     header {
-      background: var(--ink);
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 50%, #112035 100%);
       color: var(--white);
-      padding: 28px 40px 24px;
+      padding: 18px 24px 16px;
       position: relative;
       overflow: hidden;
+      flex-shrink: 0;
     }
 
+    /* Světelný efekt z hloubky – jako na webu */
     header::before {
       content: '';
       position: absolute;
-      top: 0; right: 0;
-      width: 300px; height: 100%;
-      background: linear-gradient(135deg, transparent 40%, rgba(45,110,142,0.25));
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 120% at 80% 150%, rgba(0,194,224,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 80% at 20% -20%, rgba(0,194,224,0.08) 0%, transparent 50%);
       pointer-events: none;
     }
 
-    /* Dekorativní vlnka */
+    /* Cyan linka dole – jako akcent webu */
     header::after {
       content: '';
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--water), var(--accent), var(--water));
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--cyan) 30%, var(--cyan) 70%, transparent 100%);
+    }
+
+    .header-inner {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-logo {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 8px rgba(0,194,224,0.5));
     }
 
     .header-label {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.18em;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 8px;
+      color: var(--cyan);
+      margin-bottom: 5px;
     }
 
     header h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(22px, 3vw, 32px);
-      font-weight: 600;
+      font-size: clamp(16px, 3.5vw, 22px);
+      font-weight: 700;
       line-height: 1.2;
-      /* UPRAV: Název konference */
-      /* Obsah je v HTML níže */
+      letter-spacing: -0.01em;
+      color: var(--white);
+    }
+
+    header h1 span {
+      color: var(--cyan);
     }
 
     .header-sub {
-      margin-top: 6px;
-      font-size: 14px;
+      margin-top: 3px;
+      font-size: 11px;
       font-weight: 300;
-      color: rgba(255,255,255,0.6);
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.03em;
     }
 
-    /* ─── Hlavní oblast ──────────────────────────────────── */
+    /* ── HLAVNÍ OBSAH ────────────────────────────────────── */
     main {
       flex: 1;
       display: flex;
       flex-direction: column;
-      max-width: 860px;
       width: 100%;
+      max-width: 800px;
       margin: 0 auto;
-      padding: 32px 24px 24px;
+      padding: 20px 16px 14px;
+      min-height: 0;
     }
 
-    /* ─── Okno s historií chatu ──────────────────────────── */
+    /* ── OKNO CHATU ──────────────────────────────────────── */
     #chat-window {
       flex: 1;
-      min-height: 340px;
-      max-height: 60vh;
+      min-height: 300px;
+      max-height: calc(100dvh - 295px);
       overflow-y: auto;
       background: var(--white);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 16px;
+      padding: 20px;
+      margin-bottom: 12px;
       box-shadow: var(--shadow);
       scroll-behavior: smooth;
     }
 
-    #chat-window::-webkit-scrollbar { width: 6px; }
+    #chat-window::-webkit-scrollbar { width: 4px; }
     #chat-window::-webkit-scrollbar-track { background: transparent; }
-    #chat-window::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    #chat-window::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
     /* Uvítací zpráva */
     .welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
       text-align: center;
-      padding: 40px 20px;
-      color: var(--ink-light);
+      min-height: 220px;
     }
 
-    .welcome-icon {
-      font-size: 40px;
+    .welcome-drop {
+      width: 52px;
+      height: 52px;
       margin-bottom: 16px;
-      opacity: 0.6;
+      animation: floatDrop 3s ease-in-out infinite;
+    }
+
+    @keyframes floatDrop {
+      0%, 100% { transform: translateY(0); filter: drop-shadow(0 4px 8px rgba(0,194,224,0.3)); }
+      50%       { transform: translateY(-7px); filter: drop-shadow(0 10px 16px rgba(0,194,224,0.5)); }
     }
 
     .welcome h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--ink);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
       margin-bottom: 10px;
+      letter-spacing: -0.01em;
     }
 
     .welcome p {
-      font-size: 15px;
-      line-height: 1.6;
-      max-width: 400px;
-      margin: 0 auto;
+      font-size: 13.5px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--text-soft);
+      max-width: 340px;
     }
 
-    /* Bubliny zpráv */
+    .welcome p strong {
+      color: var(--navy-light);
+      font-weight: 600;
+    }
+
+    /* ── ZPRÁVY ──────────────────────────────────────────── */
     .message {
       display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-      animation: fadeUp 0.3s ease;
+      gap: 10px;
+      margin-bottom: 16px;
+      animation: fadeUp 0.25s ease;
     }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(6px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
     .message.user { flex-direction: row-reverse; }
 
     .avatar {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
       flex-shrink: 0;
+      margin-top: 2px;
     }
 
     .message.user .avatar {
-      background: var(--ink);
+      background: var(--navy);
       color: var(--white);
+      font-size: 13px;
     }
 
     .message.bot .avatar {
-      background: var(--water-pale);
-      color: var(--water);
-      border: 1px solid var(--border);
+      background: var(--navy);
+      border: 1.5px solid var(--cyan);
+      box-shadow: 0 0 8px rgba(0,194,224,0.25);
     }
 
+    .avatar-drop { width: 18px; height: 18px; }
+
+    /* Bubliny */
     .bubble {
-      max-width: 75%;
-      padding: 12px 16px;
+      max-width: 78%;
+      padding: 11px 15px;
       border-radius: 12px;
-      font-size: 15px;
+      font-size: 14px;
+      font-weight: 400;
       line-height: 1.65;
     }
 
     .message.user .bubble {
-      background: var(--ink);
+      background: var(--navy);
       color: var(--white);
-      border-bottom-right-radius: 4px;
+      border-bottom-right-radius: 3px;
     }
 
-    .bubble p {
-      margin: 0 0 10px 0;
-    }
-    .bubble p:last-child {
-      margin-bottom: 0;
-    }
     .message.bot .bubble {
-      background: var(--water-pale);
-      color: var(--ink);
+      background: var(--mint-light);
+      color: var(--text-dark);
       border: 1px solid var(--border);
-      border-bottom-left-radius: 4px;
+      border-bottom-left-radius: 3px;
     }
 
-    /* Animovaný indikátor přemýšlení */
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+
+    .bubble strong {
+      color: var(--navy-light);
+      font-weight: 600;
+    }
+
+    .bubble ul { padding-left: 18px; margin: 6px 0; }
+    .bubble li { margin-bottom: 4px; }
+
+    /* ── PŘEMÝŠLENÍ ──────────────────────────────────────── */
     .thinking {
       display: flex;
       gap: 5px;
       align-items: center;
-      padding: 14px 18px;
+      padding: 12px 16px;
     }
 
     .dot {
-      width: 7px; height: 7px;
-      background: var(--water);
+      width: 6px; height: 6px;
+      background: var(--cyan);
       border-radius: 50%;
       animation: bounce 1.2s infinite;
     }
-
     .dot:nth-child(2) { animation-delay: 0.2s; }
     .dot:nth-child(3) { animation-delay: 0.4s; }
 
     @keyframes bounce {
-      0%, 60%, 100% { transform: translateY(0); }
-      30%            { transform: translateY(-7px); }
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+      30%            { transform: translateY(-6px); opacity: 1; }
     }
 
-    /* ─── Vzorové dotazy ─────────────────────────────────── */
+    /* ── VZOROVÉ DOTAZY ──────────────────────────────────── */
     #suggestions {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 16px;
+      gap: 7px;
+      margin-bottom: 12px;
     }
 
     .suggestion {
       background: var(--white);
       border: 1px solid var(--border);
-      color: var(--water);
-      font-family: 'Source Sans 3', sans-serif;
-      font-size: 13px;
-      padding: 7px 14px;
+      color: var(--navy-light);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 13px;
       border-radius: 20px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.18s;
       white-space: nowrap;
+      letter-spacing: 0.01em;
     }
 
     .suggestion:hover {
-      background: var(--water-pale);
-      border-color: var(--water);
+      background: var(--navy);
+      border-color: var(--navy);
+      color: var(--cyan);
       transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(10,22,40,0.15);
     }
 
-    /* ─── Vstupní oblast ─────────────────────────────────── */
+    .suggestion:active { transform: translateY(0); }
+
+    /* ── VSTUPNÍ POLE ────────────────────────────────────── */
     #input-area {
       display: flex;
-      gap: 10px;
+      align-items: flex-end;
+      gap: 8px;
       background: var(--white);
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--border);
       border-radius: 12px;
-      padding: 10px 10px 10px 16px;
-      box-shadow: var(--shadow);
-      transition: border-color 0.2s;
+      padding: 8px 8px 8px 14px;
+      box-shadow: 0 2px 8px rgba(10,22,40,0.07);
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     #input-area:focus-within {
-      border-color: var(--water);
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(0,194,224,0.12);
     }
 
     #user-input {
       flex: 1;
       border: none;
       outline: none;
-      font-family: 'Source Sans 3', sans-serif;
-      font-size: 15px;
-      color: var(--ink);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-dark);
       background: transparent;
       resize: none;
-      min-height: 44px;
-      max-height: 120px;
+      min-height: 40px;
+      max-height: 110px;
       line-height: 1.5;
-      padding: 8px 0;
+      padding: 6px 0;
     }
 
-    #user-input::placeholder { color: #9aafbf; }
+    #user-input::placeholder { color: #a0b8c8; }
 
     #send-btn {
-      background: var(--water);
-      color: var(--white);
+      background: var(--cyan);
+      color: var(--navy);
       border: none;
-      border-radius: 8px;
-      width: 44px;
-      height: 44px;
+      border-radius: 9px;
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
       flex-shrink: 0;
-      align-self: flex-end;
     }
 
-    #send-btn:hover { background: var(--ink); transform: scale(1.05); }
-    #send-btn:disabled { background: var(--border); cursor: not-allowed; transform: none; }
+    #send-btn:hover:not(:disabled) {
+      background: var(--cyan-dark);
+      transform: scale(1.06);
+      box-shadow: 0 4px 12px rgba(0,194,224,0.35);
+    }
+    #send-btn:active:not(:disabled) { transform: scale(0.97); }
+    #send-btn:disabled { background: var(--border); cursor: not-allowed; }
+    #send-btn svg { width: 16px; height: 16px; }
 
-    #send-btn svg { width: 18px; height: 18px; }
-
-    /* ─── Patička ────────────────────────────────────────── */
+    /* ── PATIČKA ─────────────────────────────────────────── */
     footer {
       text-align: center;
-      padding: 16px;
-      font-size: 12px;
-      color: #8aa0b2;
+      padding: 10px 16px 14px;
+      font-size: 10.5px;
+      font-weight: 400;
+      color: var(--text-soft);
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
     }
 
-    /* ─── Responzivita ───────────────────────────────────── */
-    @media (max-width: 600px) {
-      header { padding: 20px 20px 18px; }
-      main { padding: 16px 12px 12px; }
-      .bubble { max-width: 88%; font-size: 14px; }
-      .suggestion { font-size: 12px; }
+    /* ── MOBILNÍ OPTIMALIZACE ────────────────────────────── */
+    @media (max-width: 500px) {
+      header { padding: 14px 16px 12px; }
+      .header-logo { width: 34px; height: 34px; }
+      main { padding: 14px 10px 10px; }
+      #chat-window {
+        max-height: calc(100dvh - 275px);
+        padding: 14px;
+      }
+      .bubble { max-width: 88%; font-size: 13.5px; }
+      .suggestion { font-size: 11.5px; padding: 5px 11px; }
+      .welcome h2 { font-size: 16px; }
+    }
+
+    @media (max-width: 360px) {
+      header h1 { font-size: 15px; }
+      .header-sub { display: none; }
+      .bubble { max-width: 93%; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ─── Záhlaví ─────────────────────────────────────────── -->
+  <!-- ── ZÁHLAVÍ ─────────────────────────────────────────── -->
   <header>
-    <div class="header-label">Průvodce sborníky přednášek konference Pitná voda</div>
-    <h1>Pitná voda 2022 &amp; 2024</h1>
-    <div class="header-sub">ENVI-PUR, s.r.o. a W@ET Team České Budějovice &nbsp;·&nbsp; Zeptejte se na obsah sborníků obou ročníků</div>
+    <div class="header-inner">
+      <!-- SVG kapka – cyan na navy pozadí -->
+      <svg class="header-logo" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hg" x1="20%" y1="0%" x2="80%" y2="100%">
+            <stop offset="0%" stop-color="#7aeeff"/>
+            <stop offset="100%" stop-color="#00b4d0"/>
+          </linearGradient>
+        </defs>
+        <path d="M22 4 C22 4 8 18 8 27 C8 34.7 14.3 41 22 41 C29.7 41 36 34.7 36 27 C36 18 22 4 22 4Z"
+              fill="url(#hg)"/>
+        <ellipse cx="17" cy="24" rx="3" ry="5" fill="white" opacity="0.35" transform="rotate(-20 17 24)"/>
+        <path d="M22 41 C22 41 30 36 33 29" stroke="white" stroke-width="0.5" stroke-opacity="0.2"/>
+      </svg>
+
+      <div class="header-text">
+        <div class="header-label">Průvodce sborníky přednášek</div>
+        <h1>Pitná voda <span>2022</span> &amp; <span>2024</span></h1>
+        <div class="header-sub">ENVI-PUR, s.r.o. · Zeptejte se na obsah sborníků</div>
+      </div>
+    </div>
   </header>
 
-  <!-- ─── Hlavní obsah ─────────────────────────────────────── -->
+  <!-- ── HLAVNÍ OBSAH ─────────────────────────────────────── -->
   <main>
 
-    <!-- Okno chatu -->
     <div id="chat-window">
       <div class="welcome" id="welcome">
-        <div class="welcome-icon">💧</div>
-        <h2>Průvodce sborníky Pitná voda 2022 a 2024</h2>
+        <svg class="welcome-drop" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="wg" x1="20%" y1="0%" x2="80%" y2="100%">
+              <stop offset="0%" stop-color="#7aeeff"/>
+              <stop offset="100%" stop-color="#0099b8"/>
+            </linearGradient>
+          </defs>
+          <path d="M28 5 C28 5 10 23 10 34 C10 44.5 18.1 51 28 51 C37.9 51 46 44.5 46 34 C46 23 28 5 28 5Z"
+                fill="url(#wg)" opacity="0.95"/>
+          <ellipse cx="21" cy="30" rx="4" ry="7" fill="white" opacity="0.28" transform="rotate(-20 21 30)"/>
+        </svg>
+        <h2>Průvodce sborníky Pitná voda</h2>
         <p>Zeptejte se na příspěvky, autory nebo témata z konferencí ročníků <strong>2022</strong> a <strong>2024</strong>. Bot vždy uvede ze kterého ročníku informace pochází.</p>
       </div>
     </div>
 
+    <!-- Vzorové dotazy -->
     <div id="suggestions">
       <button class="suggestion" onclick="sendSuggestion(this.textContent)">Jaká témata byla probírána v roce 2024?</button>
       <button class="suggestion" onclick="sendSuggestion(this.textContent)">Jaká témata byla probírána v roce 2022?</button>
@@ -370,9 +482,10 @@
         oninput="autoResize(this)"
       ></textarea>
       <button id="send-btn" onclick="sendMessage()" title="Odeslat">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="22" y1="2" x2="11" y2="13"></line>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
         </svg>
       </button>
     </div>
@@ -380,45 +493,46 @@
   </main>
 
   <footer>
-    Bot odpovídá výhradně na základě sborníků konferencí Pitná voda 2022 a 2024 · ENVI-PUR, s.r.o.
+    Bot odpovídá výhradně na základě sborníků Pitná voda 2022 a 2024 · ENVI-PUR, s.r.o.
   </footer>
 
   <script>
-    // ─── Markdown renderer ──────────────────────────────────
+    // ── Markdown renderer ────────────────────────────────────
     function renderMarkdown(text) {
-      // Escapujeme HTML znaky pro bezpečnost
       let html = text
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
-      // **tučný text** → <strong>
       html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-      // Pomlčkové odrážky → <li>
       html = html.replace(/^[ \t]*[-–] (.+)/gm, "<li>$1</li>");
       html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, "<ul>$1</ul>");
-      // Dvojitý prázdný řádek → vizuální mezera mezi příspěvky
       html = html.replace(/\n\n/g, "</p><p>");
-      // Jednoduchý nový řádek → <br>
       html = html.replace(/\n/g, "<br>");
-      // Obal celé do <p>
-      html = "<p>" + html + "</p>";
-      return html;
+      return "<p>" + html + "</p>";
     }
 
-    // ─── Nastavení ─────────────────────────────────────────
-    // UPRAV: URL tvého Vercel backendu (dostaneš po deployi)
-    // Dokud testuješ lokálně, nech prázdné nebo nastav "/api/chat"
-    const API_URL = "/api/chat";
+    // ── SVG kapka pro avatar bota ────────────────────────────
+    const BOT_AVATAR_SVG = `
+      <svg class="avatar-drop" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="ag" x1="20%" y1="0%" x2="80%" y2="100%">
+            <stop offset="0%" stop-color="#7aeeff"/>
+            <stop offset="100%" stop-color="#00b4d0"/>
+          </linearGradient>
+        </defs>
+        <path d="M12 2 C12 2 4 9.5 4 14.5 C4 18.6 7.6 22 12 22 C16.4 22 20 18.6 20 14.5 C20 9.5 12 2 12 2Z"
+              fill="url(#ag)"/>
+        <ellipse cx="9" cy="13" rx="1.5" ry="2.5" fill="white" opacity="0.3" transform="rotate(-20 9 13)"/>
+      </svg>`;
 
-    // ─── Pomocné funkce ─────────────────────────────────────
+    const API_URL = "/api/chat";
 
     function autoResize(el) {
       el.style.height = 'auto';
-      el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+      el.style.height = Math.min(el.scrollHeight, 110) + 'px';
     }
 
     function handleKey(e) {
-      // Enter = odeslat, Shift+Enter = nový řádek
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
@@ -431,18 +545,20 @@
     }
 
     function addMessage(text, role) {
-      // Skryjeme uvítací zprávu při prvním dotazu
       const welcome = document.getElementById('welcome');
       if (welcome) welcome.remove();
 
-      const window = document.getElementById('chat-window');
-
+      const chatWindow = document.getElementById('chat-window');
       const msg = document.createElement('div');
       msg.className = `message ${role}`;
 
       const avatar = document.createElement('div');
       avatar.className = 'avatar';
-      avatar.textContent = role === 'user' ? '👤' : '📘';
+      if (role === 'user') {
+        avatar.textContent = '👤';
+      } else {
+        avatar.innerHTML = BOT_AVATAR_SVG;
+      }
 
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
@@ -450,22 +566,19 @@
 
       msg.appendChild(avatar);
       msg.appendChild(bubble);
-      window.appendChild(msg);
-      window.scrollTop = window.scrollHeight;
-
-      return msg;
+      chatWindow.appendChild(msg);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
     function addThinking() {
-      const window = document.getElementById('chat-window');
-
+      const chatWindow = document.getElementById('chat-window');
       const msg = document.createElement('div');
       msg.className = 'message bot';
       msg.id = 'thinking';
 
       const avatar = document.createElement('div');
       avatar.className = 'avatar';
-      avatar.textContent = '📘';
+      avatar.innerHTML = BOT_AVATAR_SVG;
 
       const bubble = document.createElement('div');
       bubble.className = 'bubble thinking';
@@ -473,8 +586,8 @@
 
       msg.appendChild(avatar);
       msg.appendChild(bubble);
-      window.appendChild(msg);
-      window.scrollTop = window.scrollHeight;
+      chatWindow.appendChild(msg);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
     function removeThinking() {
@@ -482,24 +595,16 @@
       if (el) el.remove();
     }
 
-    // ─── Hlavní funkce odeslání ──────────────────────────────
-
     async function sendMessage() {
       const input = document.getElementById('user-input');
       const btn   = document.getElementById('send-btn');
       const text  = input.value.trim();
-
       if (!text) return;
 
-      // Přidáme zprávu uživatele
       addMessage(text, 'user');
       input.value = '';
       input.style.height = 'auto';
-
-      // Skryjeme vzorové dotazy po prvním použití
       document.getElementById('suggestions').style.display = 'none';
-
-      // Zakážeme tlačítko a zobrazíme indikátor přemýšlení
       btn.disabled = true;
       addThinking();
 
@@ -509,16 +614,9 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: text })
         });
-
         const data = await response.json();
         removeThinking();
-
-        if (data.answer) {
-          addMessage(data.answer, 'bot');
-        } else {
-          addMessage(data.error || 'Nastala chyba. Zkuste to prosím znovu.', 'bot');
-        }
-
+        addMessage(data.answer || data.error || 'Nastala chyba. Zkuste to prosím znovu.', 'bot');
       } catch (err) {
         removeThinking();
         addMessage('Nepodařilo se spojit se serverem. Zkuste to znovu.', 'bot');
