@@ -413,6 +413,8 @@
       .bubble { max-width: 93%; }
     }
   </style>
+<script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 
@@ -602,6 +604,7 @@
       if (!text) return;
 
       addMessage(text, 'user');
+      if (window.va) window.va('event', { name: 'query_sent' });
       input.value = '';
       input.style.height = 'auto';
       document.getElementById('suggestions').style.display = 'none';
